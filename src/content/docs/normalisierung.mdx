@@ -1,0 +1,123 @@
+---
+title: Normalisierung
+description: Daten aufräumen mit 1NF, 2NF und 3NF
+---
+
+Normalisierung ist ein Prozess, bei dem man ein Tabellenmodell "aufräumt", um Redundanz (doppelte Daten) und Anomalien (Fehler) zu vermeiden.
+
+## Anomalien (Die Probleme)
+
+Stell dir eine *schlechte* Tabelle vor, die alles speichert:
+
+| trainer_id | trainer_name | pokemon_name | pokemon_typ |
+|------------|--------------|--------------|-------------|
+| 1          | Ash          | Pikachu      | Elektro     |
+| 1          | Ash          | Glumanda     | Feuer       |
+| 2          | Misty        | Sterndu      | Wasser      |
+
+**Probleme:**
+
+- **UPDATE-Anomalie:** Wenn Ash seinen Namen ändert, muss man das in *jeder Zeile*, in der er vorkommt, ändern. Vergisst man eine, sind die Daten inkonsistent.
+- **INSERT-Anomalie:** Man kann keinen neuen Trainer "Rocko" anlegen, der noch kein Pokémon hat, weil die Pokémon-Felder nicht leer sein dürfen (oder es wäre seltsam).
+- **DELETE-Anomalie:** Wenn Misty ihr einziges Pokémon "Sterndu" freilässt und wir die Zeile löschen, verschwindet Misty komplett aus der Datenbank!
+
+## Erste Normalform (1NF)
+
+**Regel:** Alle Attribute (Spalten) müssen *atomar* sein. Das heißt: "Keine Listen in einer Zelle".
+
+**SCHLECHT (Nicht 1NF):**
+
+| trainer_id | trainer_name | pokemons                   |
+|------------|--------------|----------------------------|
+| 1          | Ash          | 'Pikachu, Glumanda, Taubsi' |
+
+**GUT (1NF):** Die Tabelle von oben (die mit den Anomalien) ist bereits in der 1NF, da jede Zelle nur einen Wert hat.
+
+## Zweite Normalform (2NF)
+
+**Regel:** 1NF muss erfüllt sein UND jedes Nicht-Schlüssel-Attribut muss vom *gesamten* Primärschlüssel voll funktional abhängig sein.
+
+Das ist relevant bei zusammengesetzten Primärschlüsseln (wie in unserer n:m-Tabelle).
+
+**Beispiel:** In `Pokemon_lernt_Attacke(pokemon_id, attacke_id, erlernt_level)` ist `erlernt_level` vom ganzen Schlüssel abhängig (WELCHES Pokémon lernt WELCHE Attacke auf WELCHEM Level). Das ist GUT.
+
+## Dritte Normalform (3NF)
+
+**Regel:** 2NF muss erfüllt sein UND es darf keine *transitive Abhängigkeit* geben.  
+Einfach gesagt: Kein Nicht-Schlüssel-Attribut darf von einem anderen Nicht-Schlüssel-Attribut abhängen.
+
+**SCHLECHT (Nicht 3NF):**
+
+| pokemon_id | name    | typ_name | typ_schwaeche |
+|------------|---------|----------|---------------|
+| 25         | Pikachu | Elektro  | Boden         |
+| 4          | Glumanda| Feuer    | Wasser        |
+| 6          | Glurak  | Feuer    | Wasser        |
+
+:::note[Hinweis zur Vereinfachung]
+In der echten Pokémon-Welt hat jeder Typ mehrere Schwächen (z.B. Feuer ist schwach gegen Wasser, Gestein und Boden). Das würde eine komplexere n:m-Beziehung erfordern. Für dieses Beispiel vereinfachen wir auf eine Schwäche pro Typ.
+:::
+
+**Problem:** `typ_schwaeche` ("Wasser") hängt von `typ_name` ("Feuer") ab, und NICHT vom Primärschlüssel `pokemon_id`. Wenn sich die Schwäche von "Feuer" ändert, musst du es bei Glumanda UND Glurak ändern (Update-Anomalie!).
+
+**Lösung (3NF):** Man teilt die Tabelle auf.
+
+```sql
+Pokemon (
+    pokemon_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    typ_id INT FOREIGN KEY  -- Verweis auf die neue Tabelle
+)
+
+Typ (
+    typ_id INT PRIMARY KEY,
+    typ_name VARCHAR(20),
+    typ_schwaeche VARCHAR(20)
+)
+```
+
+Jetzt ist die Redundanz weg und die Daten sind konsistent!
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-6-normalisierung)
+:::
+
+## Formale Begriffe (kurz & verständlich)
+
+**Funktionale Abhängigkeit:** Ein Attribut (oder eine Attributmenge) X bestimmt eindeutig den Wert eines anderen Attributs Y. Man schreibt: `X → Y`.
+
+Beispiel: `pokemon_id → name, typ_id`. Die ID bestimmt Name und Typ.
+
+**Volle funktionale Abhängigkeit:** Bei einem zusammengesetzten Schlüssel (z.B. `(pokemon_id, attacke_id)`) hängt ein Nicht-Schlüssel-Attribut (z.B. `erlernt_level`) von der *gesamten* Kombination ab – nicht nur von einem Teil. Wenn es nur von `pokemon_id` abhinge, wäre es keine volle Abhängigkeit.
+
+**Transitive Abhängigkeit:** `X → Y` und `Y → Z`, dann ist `Z` transitiv von `X` abhängig. In der 3NF darf es so etwas für Nicht-Schlüssel-Attribute nicht geben.
+
+## BCNF & 4NF (Ausblick)
+
+- **BCNF (Boyce-Codd-NF):** Strenger als 3NF; jede nicht-triviale funktionale Abhängigkeit hat einen Schlüssel als Determinante. Meist relevant bei exotischen Schlüsselstrukturen.
+- **4NF:** Beseitigt Probleme mit mehrwertigen Abhängigkeiten (wenn eine Entität zwei unabhängige Listen hat). In Schulprojekten selten nötig.
+
+Merke: Für die meisten praktischen Fälle reichen **3NF** oder **BCNF** aus – darüber hinaus ist Spezialfall.
+
+## Zusätzliche Beispiele (Kino & Schule)
+
+### Kino – Update-Anomalie
+Schlechte Tabelle speichert Vorstellung + Film-Titel mehrfach:
+| vorstellung_id | film_titel | startzeit |
+|----------------|------------|-----------|
+| 10             | Matrix     | 2025-11-20 19:30 |
+| 11             | Matrix     | 2025-11-21 21:30 |
+Wenn sich der Titel ändert (Sondervorstellung "Matrix (Remastered)"), muss man mehrere Zeilen anfassen.
+
+### Schule – Insert-Anomalie
+Schlechte Tabelle:
+| schueler_id | schueler_name | kurs_titel | lehrer_name |
+|-------------|---------------|------------|-------------|
+| 1           | Anna          | Mathe Basis| Müller      |
+Neuen Kurs anlegen ohne Schüler? Nicht möglich ohne Dummy-Schüler → Verletzung der 1NF-Idee.
+
+### Schule – Delete-Anomalie
+Wenn letzter Schüler den Kurs verlässt und Zeile gelöscht wird, verliert man Kurs + Lehrer-Zuordnung.
+
+### Lösung
+Aufteilen in: `Schueler`, `Kurs`, `Lehrer`, `Unterricht`, `Einschreibung`.

@@ -1,0 +1,17 @@
+[
+    {
+        "trainer_id": 1,
+        "name": "Ash",
+        "heimatort": "Alabastia"
+    },
+    {
+        "trainer_id": 2,
+        "name": "Misty",
+        "heimatort": "Azuria City"
+    },
+    {
+        "trainer_id": 3,
+        "name": "Rocko",
+        "heimatort": "Marmoria"
+    }
+]

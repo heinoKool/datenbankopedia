@@ -1,0 +1,20 @@
+{
+  "name": "datenbankopedia",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.36.2",
+    "@catppuccin/starlight": "^1.0.2",
+    "astro": "^5.15.6"
+  },
+  "devDependencies": {
+    "tslib": "^2.8.1"
+  }
+}

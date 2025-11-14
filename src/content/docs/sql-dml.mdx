@@ -1,0 +1,68 @@
+---
+title: 'SQL: DML (Data Manipulation Language)'
+description: Daten einfügen, ändern und löschen mit INSERT, UPDATE, DELETE
+---
+
+Jetzt, wo wir die leeren Tabellen haben, füllen wir sie mit DML-Befehlen mit Leben (Daten).
+
+## `INSERT INTO`
+
+Fügt einen neuen Datensatz (eine Zeile) in eine Tabelle ein.
+
+```sql
+-- Fügt einen neuen Trainer hinzu
+INSERT INTO Trainer (name, heimatort) 
+VALUES ('Ash Ketchum', 'Alabastia');
+
+-- Fügt einen weiteren Trainer hinzu
+INSERT INTO Trainer (name, heimatort) 
+VALUES ('Misty', 'Azuria City');
+
+-- Fügt ein Pokémon für Ash hinzu (angenommen Ash hat trainer_id 1)
+INSERT INTO Pokemon (name, typ, level, trainer_id) 
+VALUES ('Pikachu', 'Elektro', 25, 1);
+
+-- Fügt ein Pokémon für Misty hinzu (angenommen Misty hat trainer_id 2)
+INSERT INTO Pokemon (name, typ, level, trainer_id) 
+VALUES ('Sterndu', 'Wasser', 18, 2);
+```
+
+## `UPDATE`
+
+Aktualisiert bestehende Datensätze.
+
+:::caution[WICHTIG]
+Immer mit einer `WHERE`-Bedingung verwenden, sonst änderst du ALLE Zeilen!
+:::
+
+```sql
+-- Pikachus Level erhöht sich nach einem Kampf
+UPDATE Pokemon
+SET level = 26
+WHERE name = 'Pikachu';
+
+-- Ash zieht um
+UPDATE Trainer
+SET heimatort = 'Professor Eichs Labor'
+WHERE trainer_id = 1;
+```
+
+## `DELETE FROM`
+
+Löscht Datensätze (Zeilen) aus einer Tabelle.
+
+:::danger[EXTREM WICHTIG]
+Immer mit einer `WHERE`-Bedingung verwenden, sonst löschst du die GESAMTE Tabelle!
+:::
+
+```sql
+-- Misty lässt Sterndu frei (traurig)
+DELETE FROM Pokemon
+WHERE name = 'Sterndu' AND trainer_id = 2;
+```
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-8-sql-dml)
+:::
+
+

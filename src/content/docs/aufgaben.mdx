@@ -1,0 +1,94 @@
+---
+title: Übungsaufgaben
+description: Aufgaben zu allen Kapiteln der Datenbankeinheit
+---
+
+Hier findest du die Aufgaben zu den jeweiligen Kapiteln. Versuche, sie zuerst auf Papier oder in einem Texteditor zu lösen!
+
+## Kap. 1 & 2: Grundlagen & Architektur
+
+1. Was ist der Unterschied zwischen einer Datenbank (DB) und einem Datenbankmanagementsystem (DBMS)? Erkläre es in eigenen Worten.
+2. Nenne zwei Vorteile der 3-Ebenen-Architektur.
+3. **Transfer-Aufgabe (Instagram):** Ordne die folgenden Begriffe den 3 Ebenen (Extern, Konzeptionell, Intern) zu:
+   - a) Dein "Reels"-Feed in der App.
+   - b) Ein ER-Modell, das `User`, `Post` und `Like` in Beziehung setzt.
+   - c) Die Festlegung, dass User-Daten auf einem schnellen SSD-Server-Cluster gespeichert werden (Index-Datei).
+   - d) Dein Profil-Screen.
+
+## Kap. 3 & 4: Phasen & ER-Modell
+
+**ER-Modell für Instagram (light):**
+
+Zeichne ein ER-Modell (UML- oder Krähenfuß-Notation) für einen einfachen Instagram-Klon.
+
+Es soll folgende Entitätstypen geben: `User`, `Post`, `Kommentar`.
+
+Überlege dir die Beziehungen und ihre Kardinalitäten:
+- Ein `User` *erstellt* ... `Post`(s)?
+- Ein `User` *schreibt* ... `Kommentar`(e)?
+- Ein `Post` *hat* ... `Kommentar`(e)?
+
+**Bonus:** Füge eine n:m-Beziehung "`User` *liked* `Post`" hinzu.
+
+## Kap. 5: Logisches Modell
+
+1. Wandle dein Instagram-ER-Modell aus der letzten Aufgabe in ein logisches Tabellenmodell um.
+2. Schreibe die Tabellen auf (wie im Pokémon-Beispiel).
+3. Bestimme für jede Tabelle einen Primärschlüssel (PK).
+4. Zeichne die Fremdschlüssel (FK) ein, um die 1:n-Beziehungen abzubilden.
+5. Wie löst du die n:m-Beziehung "User liked Post" auf? Welche Tabelle(n) brauchst du?
+
+## Kap. 6: Normalisierung
+
+Gegeben ist folgende (schlechte) Tabelle für einen Musik-Streaming-Dienst:
+
+| PlaylistID | PlaylistName | SongID | SongTitel  | ArtistName | ArtistGenre |
+|------------|--------------|--------|------------|------------|-------------|
+| 1          | Chill        | 101    | Wonderwall | Oasis      | Britpop     |
+| 1          | Chill        | 102    | Yellow     | Coldplay   | Pop Rock    |
+| 2          | 90s Rock     | 101    | Wonderwall | Oasis      | Britpop     |
+
+1. a) Warum ist diese Tabelle nicht in der 3. Normalform (3NF)? Wo siehst du Redundanz?
+2. b) Nenne eine Insert-, Update- und Delete-Anomalie, die hier auftreten kann.
+3. c) Normalisiere dieses Schema in die 3NF. Welche Tabellen würdest du erstellen?
+
+## Kap. 7: SQL DDL
+
+Schreibe die `CREATE TABLE`-Befehle für dein normalisiertes Instagram-Tabellenmodell.
+
+- Verwende sinnvolle Datentypen (z.B. `INT AUTO_INCREMENT`, `VARCHAR(...)`, `DATETIME`).
+- Definiere die `PRIMARY KEY`s und `FOREIGN KEY`s.
+
+## Kap. 8: SQL DML
+
+1. Schreibe `INSERT`-Befehle, um:
+   - a) Zwei User anzulegen (z.B. 'pokefan99' und 'insta_queen').
+   - b) 'pokefan99' einen Post mit dem Text "Pikachu ist das Beste!" erstellen zu lassen.
+   - c) 'insta_queen' diesen Post kommentieren zu lassen ("Absolut!").
+2. Schreibe einen `UPDATE`-Befehl, um den Post-Text von 'pokefan99' zu ändern in "Glumanda ist das Beste!".
+3. Schreibe einen `DELETE`-Befehl, um den Kommentar von 'insta_queen' zu löschen.
+
+## Kap. 9: SQL DQL
+
+Schreibe `SELECT`-Abfragen, um:
+
+1. a) Alle User-Namen anzuzeigen, sortiert nach dem Namen (A-Z).
+2. b) Alle Posts (nur den Text) anzuzeigen, die vom User 'pokefan99' erstellt wurden.
+3. c) **Bonus (mit JOIN):** Alle Kommentare (den Text) anzuzeigen, zusammen mit dem User-Namen der Person, die den Kommentar geschrieben hat.
+
+## Extra-Domäne: Kino
+1. Erstelle ein ER-Modell für Film, Vorstellung, Saal, Ticket.
+2. Bestimme alle 1:n und potentielle n:m Beziehungen (falls Kunde hinzukommt).
+3. SQL: Zeige alle kommenden Vorstellungen eines bestimmten Films (film_id = 3).
+4. Aggregation: Berechne pro Vorstellung die Auslastung in Prozent.
+5. Bonus: Füge eine Verknüpfung Kunde–Ticket hinzu und zeige: Anzahl Tickets pro Kunde.
+
+## Extra-Domäne: Schule
+1. Modellieren: Schüler–Kurs–Lehrer mit Unterricht und Einschreibung.
+2. Normalisierung: Erkläre Redundanz in einer Tabelle mit (schueler_name, kurs_titel, lehrer_name).
+3. SQL: Zeige alle Kurse eines bestimmten Lehrers (lehrer_id = 2) mit Zeitraum.
+4. GROUP BY: Anzahl Schüler pro Kurs.
+5. Bonus: Finde Schüler, die an mindestens 3 Kursen teilnehmen.
+
+## Quiz (Meta)
+

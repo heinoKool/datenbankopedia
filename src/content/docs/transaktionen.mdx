@@ -1,0 +1,72 @@
+---
+title: Transaktionen & ACID
+description: Atomarität, Konsistenz, Isolation, Dauerhaftigkeit verstehen
+---
+
+Transaktionen bündeln mehrere Änderungen zu einer **logischen Einheit**: Entweder alles passiert oder nichts.
+
+## Beispiel
+
+"Fange ein Pokémon" könnte intern sein:
+1. Eintrag in `Pokemon` anlegen
+2. Erfahrung des Trainers erhöhen
+3. Statistik aktualisieren
+
+Wenn Schritt 2 fehlschlägt, wollen wir Schritt 1 rückgängig machen.
+
+## ACID-Eigenschaften
+
+| Buchstabe | Bedeutung | Einfach erklärt |
+|-----------|-----------|-----------------|
+| A (Atomicity) | Alles oder nichts | Kein halbfertiges Zwischenergebnis |
+| C (Consistency) | Regeln bleiben gültig | Constraints & Logik bleiben intakt |
+| I (Isolation) | Gleichzeitige Transaktionen stören sich nicht | "Simultane Spiele" beeinflussen sich nicht |
+| D (Durability) | Nach COMMIT bleibt es | Stromausfall überlebt |
+
+## Grundbefehle
+
+```sql
+START TRANSACTION; -- oder BEGIN
+UPDATE Trainer SET erfahrung = erfahrung + 50 WHERE trainer_id = 1;
+INSERT INTO Pokemon (name, typ, level, trainer_id) VALUES ('Mauzi', 'Normal', 12, 1);
+COMMIT; -- dauerhaft speichern
+-- ROLLBACK; -- statt COMMIT: alles zurücknehmen
+```
+
+## SAVEPOINTS
+
+```sql
+START TRANSACTION;
+SAVEPOINT vor_fang;
+INSERT INTO Pokemon (...);
+-- Fehler? Dann
+ROLLBACK TO vor_fang; -- Teilweise zurück
+COMMIT;
+```
+
+## Isolation (vereinfacht)
+
+| Stufe | Effekt | Risiko reduziert |
+|-------|--------|------------------|
+| READ UNCOMMITTED | kann "schmutzige" (ungespeicherte) Daten sehen | keine |
+| READ COMMITTED | sieht nur bestätigte Daten | dirty reads |
+| REPEATABLE READ | gleiche Zeile bleibt gleich | non-repeatable reads |
+| SERIALIZABLE | wirkt wie nacheinander ausgeführt | phantom reads |
+
+In vielen Systemen ist Standard: `READ COMMITTED` oder `REPEATABLE READ`.
+
+## Typische Anomalien
+- **Dirty Read:** Eine Transaktion sieht unveröffentlichte Daten einer anderen.
+- **Non-Repeatable Read:** Gleiche Abfrage liefert plötzlich andere Werte (Zwischenupdate).
+- **Phantom Read:** Neue Zeilen tauchen zwischen zwei Abfragen auf.
+
+## Gute Praxis
+- Kurze Transaktionen (Lock-Zeit minimieren)
+- Nur nötige Zeilen anfassen
+- Bei kritischen Geld- oder Punkte-Operationen Isolation hoch setzen
+
+:::tip[Weiter]
+Siehe auch: [SQL DML](/sql-dml/) und [Schlüssel & Integrität](/schluessel/)
+:::
+
+

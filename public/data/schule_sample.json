@@ -1,0 +1,61 @@
+{
+    "Schueler": [
+        {
+            "schueler_id": 1,
+            "name": "Anna",
+            "klasse": "11A"
+        },
+        {
+            "schueler_id": 2,
+            "name": "Ben",
+            "klasse": "11B"
+        },
+        {
+            "schueler_id": 3,
+            "name": "Cara",
+            "klasse": "11A"
+        }
+    ],
+    "Lehrer": [
+        {
+            "lehrer_id": 1,
+            "name": "Müller",
+            "fach": "Mathematik"
+        },
+        {
+            "lehrer_id": 2,
+            "name": "Schmidt",
+            "fach": "Informatik"
+        }
+    ],
+    "Kurs": [
+        {
+            "kurs_id": 1,
+            "titel": "Mathe Basis",
+            "fachgebiet": "Mathematik"
+        },
+        {
+            "kurs_id": 2,
+            "titel": "Informatik Web",
+            "fachgebiet": "Informatik"
+        }
+    ],
+    "Einschreibung": [
+        {
+            "schueler_id": 1,
+            "kurs_id": 1
+        },
+        {
+            "schueler_id": 1,
+            "kurs_id": 2
+        },
+        {
+            "schueler_id": 2,
+            "kurs_id": 1
+        },
+        {
+            "schueler_id": 3,
+            "kurs_id": 2
+        }
+    ]
+}

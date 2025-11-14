@@ -1,0 +1,34 @@
+---
+title: Phasen der Datenbankentwicklung
+description: Von der Anforderungsanalyse bis zur Implementierung
+---
+
+Eine Datenbank "passiert" nicht einfach. Sie wird sorgfältig geplant. Dieser Prozess lässt sich in vier Phasen unterteilen:
+
+## 1. Externe Phase (Anforderungsanalyse)
+
+Man spricht mit den zukünftigen Nutzern. Was muss das System können?
+
+**Beispiel Pokémon-Spiel:** "Ich will Trainer erstellen können. Jeder Trainer soll Pokémon fangen. Pokémon haben Attacken. Man soll sehen können, welche Pokémon ein Trainer besitzt."
+
+## 2. Konzeptionelle Phase (Konzeptioneller Entwurf)
+
+Die Anforderungen werden in ein formales, DBMS-unabhängiges Modell übersetzt. Das Ergebnis ist das **ER-Modell**.
+
+## 3. Logische Phase (Logischer Entwurf)
+
+Das ER-Modell wird in das Modell eines konkreten Datenbank-Typs übersetzt (z.B. in ein **Tabellenmodell** für relationale Datenbanken). Immer noch DBMS-unabhängig.
+
+## 4. Physische Phase (Physischer Entwurf & Implementierung)
+
+Hier treffen zwei Schritte zusammen:
+- **Physischer Entwurf:** Index-Strategien, Speicher-Layouts, Partitionierung, Wahl von Datentypen für Performance.
+- **Implementierung:** Konkrete Ausführung in einem DBMS (z.B. MariaDB) – Tabellen anlegen, Constraints, Indizes erstellen.
+
+Änderungen hier (z.B. neue Indizes) beeinflussen idealerweise nicht das konzeptionelle Modell (Datenunabhängigkeit).
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-3--4-phasen--er-modell)
+:::
+
+

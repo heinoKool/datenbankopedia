@@ -1,0 +1,32 @@
+---
+title: Was ist eine Datenbank?
+description: Grundlagen von Datenbanken und Datenbankmanagementsystemen
+---
+
+## a) Datenbank (DB)
+
+Eine Datenbank ist einfach eine **organisierte Sammlung von Daten**. Stell dir einen riesigen, digitalen Aktenschrank vor. Statt Papierakten speichert er Daten wie Benutzernamen, Passwörter, Fotos, Likes, Kommentare, etc.
+
+Ziel ist es, diese riesigen Datenmengen effizient, dauerhaft und widerspruchsfrei (konsistent) zu speichern und schnell wiederzufinden.
+
+## b) Datenbankmanagementsystem (DBMS)
+
+Das DBMS ist die **Software, die den Aktenschrank verwaltet**. Du (oder die App) sagst dem DBMS: "Hey, speichere dieses neue Foto für User 'Ash'" oder "Zeig mir alle Kommentare zu Post 123".
+
+Das DBMS kümmert sich um den Rest:
+
+- Es legt die Daten physisch auf der Festplatte ab.
+- Es stellt sicher, dass niemand unbefugt darauf zugreift.
+- Es sorgt dafür, dass Daten nicht verloren gehen (z.B. bei einem Stromausfall).
+- Es stellt eine Sprache (wie SQL) bereit, um mit den Daten zu "reden".
+
+### Beispiel Instagram
+
+- **Datenbank:** Alle User-Profile, alle hochgeladenen Bilder, alle Videos, alle Likes, alle Kommentare, alle Follower-Beziehungen.
+- **DBMS:** Eine Software (z.B. PostgreSQL oder MariaDB), die im Hintergrund bei Instagram läuft und all diese Daten verwaltet. Wenn du die App öffnest, stellt die App eine Anfrage an das DBMS, um deinen Feed zu laden.
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-1--2-grundlagen--architektur)
+:::
+
+

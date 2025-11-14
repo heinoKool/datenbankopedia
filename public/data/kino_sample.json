@@ -1,0 +1,51 @@
+{
+    "Film": [
+        {
+            "film_id": 1,
+            "titel": "Matrix",
+            "dauer_min": 136,
+            "fsk": "16"
+        },
+        {
+            "film_id": 2,
+            "titel": "Interstellar",
+            "dauer_min": 169,
+            "fsk": "12"
+        }
+    ],
+    "Saal": [
+        {
+            "saal_id": 1,
+            "bezeichnung": "Saal 1",
+            "sitzplaetze": 120
+        },
+        {
+            "saal_id": 2,
+            "bezeichnung": "Saal 2",
+            "sitzplaetze": 80
+        }
+    ],
+    "Vorstellung": [
+        {
+            "vorstellung_id": 10,
+            "film_id": 1,
+            "saal_id": 1,
+            "startzeit": "2025-11-20T19:30:00",
+            "preis": 12.50
+        },
+        {
+            "vorstellung_id": 11,
+            "film_id": 1,
+            "saal_id": 1,
+            "startzeit": "2025-11-21T21:30:00",
+            "preis": 12.50
+        },
+        {
+            "vorstellung_id": 12,
+            "film_id": 2,
+            "saal_id": 2,
+            "startzeit": "2025-11-22T18:00:00",
+            "preis": 13.00
+        }
+    ]
+}

@@ -1,0 +1,129 @@
+---
+title: Vom ERM zum relationalen Schema
+description: Abbildungsregeln vom ER-Modell zu Tabellen + Schlüssel & Integrität
+---
+
+Jetzt übersetzen wir das grafische ERM in ein **relationales Schema** (Sammlung von Tabellen). "Tabellenmodell" sagt man umgangssprachlich – präziser ist: Relationaler Entwurf.
+
+## Schlüssel (Keys)
+
+- **Primärschlüssel (Primary Key, PK):** Ein Attribut (oder mehrere), das einen Datensatz in einer Tabelle *eindeutig* identifiziert. Jede Tabelle braucht einen PK.
+  - **Beispiel:** `trainer_id` (z.B. 1) für 'Ash', `pokemon_id` (z.B. 25) für 'Pikachu'.
+- **Fremdschlüssel (Foreign Key, FK):** Ein Attribut in einer Tabelle, das auf den Primärschlüssel einer *anderen* Tabelle verweist. So werden Beziehungen hergestellt!
+
+Weitere Schlüsselarten (Details im Kapitel "Schlüssel & Integrität"):
+- **Candidate Key:** Möglicher Schlüssel-Kandidat – jeder Candidate Key könnte theoretisch Primärschlüssel sein.
+- **Alternate Key:** Ein Candidate Key, der nicht zum Primärschlüssel gewählt wurde.
+- **Composite Key:** Schlüssel aus mehreren Attributen (z.B. `(pokemon_id, attacke_id)`).
+- **Surrogate Key:** Künstlicher Schlüssel (z.B. AUTO_INCREMENT), ersetzt natürlichen zusammengesetzten Personalausweis + Land.
+- **Natural Key:** Natürliche eindeutige Information (z.B. ISBN, E-Mail) – manchmal instabil (E-Mail kann sich ändern).
+
+## Abbildungsregeln
+
+### 1. Jede Entität wird zu einer Tabelle
+
+- Entität `Trainer` → Tabelle `Trainer` (mit PK `trainer_id`)
+- Entität `Pokemon` → Tabelle `Pokemon` (mit PK `pokemon_id`)
+- Entität `Attacke` → Tabelle `Attacke` (mit PK `attacke_id`)
+
+### 2. Abbildung von 1:n-Beziehungen
+
+Der Primärschlüssel der '1'-Seite wird als Fremdschlüssel in die Tabelle der 'n'-Seite aufgenommen.
+
+**Beispiel:** `Trainer` (1) besitzt `Pokemon` (n).  
+Der PK `trainer_id` aus der Tabelle `Trainer` wird als FK `trainer_id` in die Tabelle `Pokemon` eingefügt.
+
+```sql
+Trainer (
+    trainer_id INT PRIMARY KEY,
+    name VARCHAR(50)
+)
+
+Pokemon (
+    pokemon_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    typ VARCHAR(20),
+    trainer_id INT,  -- << Das ist der Fremdschlüssel!
+    FOREIGN KEY (trainer_id) REFERENCES Trainer(trainer_id)
+)
+```
+
+### 3. Abbildung von n:m-Beziehungen
+
+n:m-Beziehungen können nicht direkt abgebildet werden. Man braucht eine zusätzliche **Verknüpfungstabelle** (auch Zwischentabelle genannt).
+
+**Beispiel:** `Pokemon` (n) lernt `Attacke` (m).  
+Wir erstellen eine neue Tabelle `Pokemon_lernt_Attacke`.  
+Diese Tabelle erhält die Primärschlüssel *beider* beteiligten Tabellen als Fremdschlüssel. Zusammen bilden sie den Primärschlüssel der Verknüpfungstabelle.
+
+```sql
+Pokemon_lernt_Attacke (
+    pokemon_id INT,
+    attacke_id INT,
+    PRIMARY KEY (pokemon_id, attacke_id),
+    FOREIGN KEY (pokemon_id) REFERENCES Pokemon(pokemon_id),
+    FOREIGN KEY (attacke_id) REFERENCES Attacke(attacke_id)
+)
+```
+
+Ein Eintrag `(25, 5)` in dieser Tabelle würde bedeuten: "Pokémon mit ID 25 (Pikachu) kann Attacke mit ID 5 (Donnerblitz)".
+
+## Referentielle Integrität (FK-Regeln)
+
+Ein Fremdschlüssel garantiert, dass jeder Wert auf einen existierenden Primärschlüssel verweist (oder `NULL`, falls erlaubt). Aktionen bei Löschungen/Änderungen:
+
+| Aktion | Bedeutung |
+|--------|-----------|
+| `ON DELETE RESTRICT` | Verhindert Löschen, solange abhängige Zeilen existieren |
+| `ON DELETE CASCADE` | Löscht abhängige Zeilen automatisch mit |
+| `ON DELETE SET NULL` | Setzt FK auf NULL (falls erlaubt) |
+| `ON UPDATE CASCADE` | Aktualisiert FK bei PK-Änderung |
+
+Wähle bewusst: *CASCADE* ist bequem, aber gefährlich bei unbeabsichtigten Löschungen.
+
+## Weitere Mapping-Beispiele (Kino & Schule)
+
+### Kino
+```sql
+Vorstellung (
+    vorstellung_id INT PRIMARY KEY,
+    film_id INT NOT NULL,
+    saal_id INT NOT NULL,
+    startzeit DATETIME NOT NULL,
+    FOREIGN KEY (film_id) REFERENCES Film(film_id),
+    FOREIGN KEY (saal_id) REFERENCES Saal(saal_id)
+)
+Ticket (
+    ticket_id INT PRIMARY KEY,
+    vorstellung_id INT NOT NULL,
+    platz_nr INT,
+    FOREIGN KEY (vorstellung_id) REFERENCES Vorstellung(vorstellung_id)
+)
+```
+`Film 1:n Vorstellung` → FK `film_id` in `Vorstellung`.
+
+### Schule
+```sql
+Einschreibung (
+    schueler_id INT,
+    kurs_id INT,
+    PRIMARY KEY (schueler_id, kurs_id),
+    FOREIGN KEY (schueler_id) REFERENCES Schueler(schueler_id),
+    FOREIGN KEY (kurs_id) REFERENCES Kurs(kurs_id)
+)
+Unterricht (
+    unterricht_id INT PRIMARY KEY,
+    lehrer_id INT NOT NULL,
+    kurs_id INT NOT NULL,
+    beginn DATE,
+    FOREIGN KEY (lehrer_id) REFERENCES Lehrer(lehrer_id),
+    FOREIGN KEY (kurs_id) REFERENCES Kurs(kurs_id)
+)
+```
+`Schüler n:m Kurs` → Verknüpfungstabelle `Einschreibung`.
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-5-logisches-modell)
+:::
+
+

@@ -1,0 +1,80 @@
+---
+title: Das Entity-Relationship-Modell (ERM)
+description: Entities, Relationships und Kardinalitäten verstehen
+---
+
+Das ERM ist die wichtigste Blaupause in der konzeptionellen Phase. Es ist eine grafische Darstellung der "Dinge" (Entitätstypen) und ihrer Beziehungen (Relationships) zueinander.
+
+## Entitätstypen (Entity Types)
+
+Ein **Entitätstyp** ist eine Kategorie von "Dingen" aus der realen Welt, über die wir Daten speichern wollen. Im ER-Diagramm wird ein Entitätstyp als **Rechteck** dargestellt.
+
+**Beispiel Pokémon:** Wir definieren folgende Entitätstypen...
+
+- `Trainer` (das Rechteck im ER-Modell)
+- `Pokemon` (das Rechteck im ER-Modell)
+- `Attacke` (das Rechteck im ER-Modell)
+
+**Entitäten** sind dann die konkreten Ausprägungen/Instanzen eines Entitätstyps:
+- Der Entitätstyp `Trainer` hat Entitäten wie "Ash", "Misty", "Rocko"
+- Der Entitätstyp `Pokemon` hat Entitäten wie "Pikachu #25", "Glumanda #4"
+
+:::note[Unterschied Entitätstyp vs. Entität]
+- **Entitätstyp** = Die Schablone/Kategorie (das Rechteck im ER-Modell)
+- **Entität** = Ein konkreter Eintrag (später eine Zeile in der Tabelle)
+:::
+
+## Beziehungstypen (Relationship Types)
+
+Beschreibt, wie Entitätstypen miteinander in Verbindung stehen. Wird als Raute (Chen-Notation) oder einfache Linie (UML/Krähenfuß) dargestellt.
+
+## Kardinalitäten (Vielfachheit)
+
+Die Kardinalität beschreibt, *wie viele* Entitäten eines Typs an einer Beziehung beteiligt sein können. Das ist der wichtigste Teil!
+
+### 1:1 (Eins-zu-Eins)
+
+Eine Entität vom Typ A ist mit *genau einer* Entität vom Typ B verbunden (und umgekehrt).
+
+**Beispiel:** Eine Person (Entität vom Typ `Person`) *hat* einen Personalausweis (Entität vom Typ `Personalausweis`). Ein Personalausweis *gehört zu* genau einer Person. (Kommt in der Praxis selten vor, da man solche Daten meist in einer Tabelle zusammenfasst).
+
+### 1:n (Eins-zu-Viele)
+
+Eine Entität vom Typ A kann mit *vielen* Entitäten vom Typ B verbunden sein. Eine Entität vom Typ B aber nur mit *einer* vom Typ A.
+
+**Beispiel:** Ein Trainer (z.B. "Ash") *besitzt* viele Pokemon (z.B. "Pikachu", "Glumanda", "Taubsi"). Aber jedes einzelne Pokemon gehört zu *genau einem* Trainer.
+
+### n:m (Viele-zu-Viele)
+
+Eine Entität vom Typ A kann mit *vielen* vom Typ B verbunden sein, und eine Entität vom Typ B kann auch mit *vielen* vom Typ A verbunden sein.
+
+**Beispiel:** Ein Pokemon (z.B. "Pikachu") *lernt* viele Attacken (z.B. "Donnerblitz", "Ruckzuckhieb"). Gleichzeitig kann eine Attacke (z.B. "Tackle") von *vielen* Pokemon gelernt werden.
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-3--4-phasen--er-modell)
+:::
+
+## Weitere Beispiele: Kino & Schule
+
+### Kino
+- Entitätstypen: Film, Saal, Vorstellung, Ticket
+- Beziehungen:
+	- Film 1:n Vorstellung
+	- Saal 1:n Vorstellung
+	- Vorstellung 1:n Ticket
+	- Optional: Kunde 1:n Ticket
+
+Kardinalität Beispiel: Ein Film (1) hat viele Vorstellungen (n) → (Film) 1:n (Vorstellung).
+
+### Schule
+- Entitätstypen: Schüler, Lehrer, Kurs, Einschreibung, Unterricht
+- Beziehungen:
+	- Schüler n:m Kurs (über Einschreibung)
+	- Lehrer 1:n Unterricht
+	- Kurs 1:n Unterricht
+
+Beziehungstyp vs -Instanz: Der Typ "Schüler besucht Kurs" ist allgemein – die Instanz (1, 5) bedeutet: Schüler mit ID 1 besucht Kurs mit ID 5.
+
+Schwache Entität (Beispiel): Ein Ticket könnte als schwache Entität betrachtet werden, wenn seine Identität nur innerhalb einer Vorstellung eindeutig ist (Platz + Reihe + Vorstellung).
+
+

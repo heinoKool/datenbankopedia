@@ -1,0 +1,33 @@
+---
+title: Die 3-Ebenen-Architektur (ANSI-SPARC)
+description: Trennung von User-Sicht, logischem Schema und physischer Speicherung
+---
+
+Damit nicht jeder Entwickler wissen muss, wie Daten exakt auf einer Festplatte gespeichert werden, hat man sich auf ein 3-Ebenen-Modell geeinigt. Es trennt die Sicht des Benutzers von der physischen Speicherung.
+
+## 1. Externe Ebene (User-Sicht)
+
+Das ist das, was der Benutzer oder eine Anwendung sieht. Es ist eine angepasste, oft vereinfachte Sicht auf die Daten. Es kann viele verschiedene externe Sichten geben.
+
+**Beispiel Instagram:** Dein Profil-Screen in der App. Du siehst deine Bilder, deine Follower-Zahl und deine Bio. Du siehst NICHT, wie deine User-ID mit der Like-Tabelle verknüpft ist. Der "Feed" ist eine weitere externe Sicht.
+
+## 2. Konzeptionelle Ebene (Logisches Schema)
+
+Dies ist die "Landkarte" der gesamten Datenbank. Sie beschreibt, *welche* Daten es gibt und wie sie *logisch* zusammenhängen. Sie ist unabhängig davon, wie die Daten gespeichert werden.
+
+**Beispiel Instagram:** Hier wäre definiert: "Es gibt 'User'. Es gibt 'Posts'. Ein 'User' kann viele 'Posts' erstellen (1:n-Beziehung). Ein 'User' kann viele 'Posts' liken (n:m-Beziehung)." Dies wird oft in einem ER-Modell (sehen wir gleich) dargestellt.
+
+## 3. Interne Ebene (Physisches Schema)
+
+Hier geht es ans Eingemachte. Diese Ebene beschreibt, *wie* die Daten physisch auf den Server-Festplatten gespeichert werden. Werden B-Bäume verwendet? Welche Indizes gibt es, um User schnell zu finden? Das ist die Ebene, auf der das DBMS optimiert wird.
+
+## Vorteile dieser Trennung
+
+- **Datenunabhängigkeit:** Du kannst die interne Speicherung (z.B. neue, schnellere Festplatten) ändern, ohne die konzeptionelle Ebene oder die App (externe Ebene) anpassen zu müssen.
+- **Flexibilität:** Du kannst neue App-Features (neue externe Sichten) hinzufügen, ohne die bestehende Datenstruktur ändern zu müssen.
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-1--2-grundlagen--architektur)
+:::
+
+

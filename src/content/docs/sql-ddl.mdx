@@ -1,0 +1,173 @@
+---
+title: 'SQL: DDL (Data Definition Language)'
+description: Datenbank-Struktur mit CREATE, ALTER und DROP definieren
+---
+
+Mit DDL bauen wir die Struktur unserer Datenbank – die leeren Tabellen, die wir im logischen Modell geplant haben.
+
+## `CREATE DATABASE`
+
+Erstellt eine neue, leere Datenbank (den "Aktenschrank").
+
+```sql
+CREATE DATABASE pokemon_db CHARACTER SET utf8mb4;
+```
+
+## `USE`
+
+Wählt die Datenbank aus, in der wir arbeiten wollen.
+
+```sql
+USE pokemon_db;
+```
+
+## `CREATE TABLE`
+
+Erstellt eine neue Tabelle (einen "Aktenschublade") innerhalb der Datenbank. Hier definieren wir alle Spalten und ihre Datentypen.
+
+### Die wichtigsten Datentypen
+
+- `INT` oder `INTEGER`: Für ganze Zahlen (z.B. `trainer_id`, `level`).
+- `VARCHAR(n)`: Für Text mit variabler Länge bis zu n Zeichen (z.B. `name VARCHAR(50)`).
+- `CHAR(n)`: Für Text mit fester Länge n.
+- `DECIMAL(p, s)`: Für genaue Kommazahlen (z.B. Preis `DECIMAL(10, 2)`).
+- `DATE`: Für ein Datum (YYYY-MM-DD).
+- `DATETIME`: Für Datum und Uhrzeit.
+
+### Beispiel
+
+```sql
+-- Erstellt die Tabelle 'Trainer'
+CREATE TABLE Trainer (
+    trainer_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    heimatort VARCHAR(50)
+);
+
+-- Erstellt die Tabelle 'Pokemon' mit Fremdschlüssel
+CREATE TABLE Pokemon (
+    pokemon_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    typ VARCHAR(20),
+    level INT,
+    trainer_id INT, -- Dies wird der FK
+    
+    FOREIGN KEY (trainer_id) 
+        REFERENCES Trainer(trainer_id)
+);
+```
+
+`AUTO_INCREMENT` bedeutet, dass die Datenbank automatisch eine neue ID (1, 2, 3...) vergibt, wenn wir einen neuen Trainer anlegen. `NOT NULL` bedeutet, dass dieses Feld nicht leer sein darf.
+
+### Constraints & Integrität
+
+| Constraint | Bedeutung |
+|------------|-----------|
+| `NOT NULL` | Wert muss vorhanden sein |
+| `UNIQUE` | Alle Werte in der Spalte einzigartig |
+| `CHECK (Bedingung)` | Prüft eine Regel pro Zeile |
+| `DEFAULT` | Standardwert, falls kein Wert angegeben |
+| `PRIMARY KEY` | Eindeutige Identifikation + nicht NULL |
+| `FOREIGN KEY` | Verweist auf PK einer anderen Tabelle |
+
+**Beispiele:**
+
+```sql
+ALTER TABLE Pokemon
+ADD CONSTRAINT ck_level CHECK (level >= 1 AND level <= 100);
+
+ALTER TABLE Trainer
+ADD CONSTRAINT uq_trainer_name UNIQUE (name);
+```
+
+### ON DELETE / ON UPDATE Aktionen
+
+```sql
+CREATE TABLE Pokemon (
+    pokemon_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    typ VARCHAR(20),
+    trainer_id INT,
+    FOREIGN KEY (trainer_id)
+        REFERENCES Trainer(trainer_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+```
+
+Wähle bewusst: `SET NULL` verhindert versehentliches Löschen großer Datenmengen; `CASCADE` ist bequem, kann aber kritisch sein.
+
+## Weitere CREATE Beispiele (Kino & Schule)
+
+### Kino
+```sql
+CREATE TABLE Film (
+    film_id INT PRIMARY KEY AUTO_INCREMENT,
+    titel VARCHAR(120) NOT NULL,
+    dauer_min INT,
+    fsk VARCHAR(10)
+);
+
+CREATE TABLE Saal (
+    saal_id INT PRIMARY KEY AUTO_INCREMENT,
+    bezeichnung VARCHAR(30),
+    sitzplaetze INT NOT NULL CHECK (sitzplaetze > 0)
+);
+
+CREATE TABLE Vorstellung (
+    vorstellung_id INT PRIMARY KEY AUTO_INCREMENT,
+    film_id INT NOT NULL,
+    saal_id INT NOT NULL,
+    startzeit DATETIME NOT NULL,
+    preis DECIMAL(6,2) NOT NULL,
+    FOREIGN KEY (film_id) REFERENCES Film(film_id) ON DELETE CASCADE,
+    FOREIGN KEY (saal_id) REFERENCES Saal(saal_id) ON DELETE RESTRICT
+);
+```
+
+### Schule
+```sql
+CREATE TABLE Schueler (
+    schueler_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(80) NOT NULL,
+    klasse VARCHAR(10)
+);
+
+CREATE TABLE Lehrer (
+    lehrer_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(80) NOT NULL,
+    fach VARCHAR(40)
+);
+
+CREATE TABLE Kurs (
+    kurs_id INT PRIMARY KEY AUTO_INCREMENT,
+    titel VARCHAR(120) NOT NULL,
+    fachgebiet VARCHAR(60)
+);
+
+CREATE TABLE Einschreibung (
+    schueler_id INT,
+    kurs_id INT,
+    PRIMARY KEY (schueler_id, kurs_id),
+    FOREIGN KEY (schueler_id) REFERENCES Schueler(schueler_id) ON DELETE CASCADE,
+    FOREIGN KEY (kurs_id) REFERENCES Kurs(kurs_id) ON DELETE CASCADE
+);
+```
+
+## `ALTER TABLE`
+
+Wird verwendet, um eine bestehende Tabelle zu ändern (z.B. eine Spalte hinzufügen oder einen Fremdschlüssel nachträglich definieren).
+
+## `DROP TABLE`
+
+Löscht eine Tabelle und alle ihre Daten. Vorsicht!
+
+```sql
+DROP TABLE Pokemon;
+```
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-7-sql-ddl)
+:::
+
+

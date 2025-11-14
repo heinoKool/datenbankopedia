@@ -1,0 +1,78 @@
+---
+title: Schlüssel & Integrität
+description: Candidate, Primary, Foreign, Alternate, Composite, Surrogate, NULL-Semantik
+---
+
+Dieses Kapitel vertieft die verschiedenen Schlüsselarten und Integritätsregeln.
+
+## Schlüsselarten
+
+| Begriff | Bedeutung | Beispiel |
+|---------|-----------|----------|
+| Candidate Key | Möglicher eindeutiger Schlüssel | `email` in `User` |
+| Primary Key | Gewählter Schlüssel | `user_id` |
+| Alternate Key | Candidate Key der nicht gewählt wurde | `email` falls PK `user_id` |
+| Composite Key | Schlüssel aus mehreren Attributen | `(pokemon_id, attacke_id)` |
+| Natural Key | Natürliche reale Identifikation | ISBN, E-Mail |
+| Surrogate Key | Künstlicher Schlüssel | AUTO_INCREMENT ID |
+
+**Warum Surrogate Keys?**
+- Natürliche Keys können sich ändern (E-Mail-Adresse)
+- Zusammengesetzte Keys werden in Fremdschlüsseln sperrig
+
+## NULL-Semantik
+
+`NULL` bedeutet: "kein Wert" / "unbekannt" / "nicht anwendbar". Das führt bei Vergleichen zu Besonderheiten:
+
+```sql
+SELECT * FROM Trainer WHERE heimatort = NULL; -- liefert NICHTS
+SELECT * FROM Trainer WHERE heimatort IS NULL; -- korrekt
+```
+
+Vergleiche immer mit `IS NULL` / `IS NOT NULL`.
+
+## Integritätsarten
+
+| Art | Zweck |
+|-----|------|
+| Entity-Integrität | Jeder Primärschlüssel ist eindeutig & nicht NULL |
+| Referentielle Integrität | Jeder FK verweist auf existierenden PK |
+| Domain-Integrität | Werte erfüllen Datentyp-/Constraint-Regeln |
+
+## Beispiele
+
+```sql
+CREATE TABLE User (
+  user_id INT PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  erstellt_am DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Bestellung (
+  bestellung_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT,
+  FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
+```
+
+`ON DELETE CASCADE` löscht alle Bestellungen des Users automatisch – nur einsetzen, wenn gewünscht.
+
+## Surrogate vs Natural Key – Entscheidung
+
+| Kriterium | Natural Key | Surrogate Key |
+|-----------|-------------|---------------|
+| Stabilität | kann sich ändern | bleibt gleich |
+| Lesbarkeit | direkt verständlich | abstrakt |
+| Performance | oft ähnlich | oft ähnlich |
+| FK-Handhabung | eventuell länger | kompakt |
+
+## Gute Praxis
+- Wähle Surrogate Key + UNIQUE Constraint auf natürliches Attribut (z.B. `email`).
+- Verwende Composite Keys nur bei Verknüpfungstabellen.
+- Nutze `CHECK` für Wertebereiche (Level 1..100).
+
+:::tip[Weiter]
+Siehe auch: [Vom ERM zum relationalen Schema](/logisch/) und [SQL DDL](/sql-ddl/)
+:::
+
+

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="dbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#89dceb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#74c7ec;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Database cylinder -->
+  <ellipse cx="50" cy="30" rx="30" ry="10" fill="url(#dbGradient)" opacity="0.8"/>
+  <rect x="20" y="30" width="60" height="30" fill="url(#dbGradient)" opacity="0.8"/>
+  <ellipse cx="50" cy="60" rx="30" ry="10" fill="url(#dbGradient)"/>
+  <!-- Horizontal lines in cylinder -->
+  <ellipse cx="50" cy="40" rx="30" ry="10" fill="none" stroke="#89dceb" stroke-width="1.5"/>
+  <ellipse cx="50" cy="50" rx="30" ry="10" fill="none" stroke="#89dceb" stroke-width="1.5"/>
+</svg>

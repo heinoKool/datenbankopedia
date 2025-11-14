@@ -1,0 +1,167 @@
+---
+title: Beispiele (Kino & Schule)
+description: Fallstudien für ER-Modell, Relationen, Normalisierung und SQL
+---
+
+Dieses Kapitel zeigt zwei häufig genutzte Lern-Domänen zusätzlich zum Pokémon/Instagram-Beispiel: **Kino** und **Schule**.
+
+## Kino-Domäne
+
+### Entitätstypen
+- `Film` (Titel, Dauer, Altersfreigabe)
+- `Saal` (Nummer, Sitzplaetze)
+- `Vorstellung` (Datum/Uhrzeit, Preis)
+- `Ticket` (Reihe, Sitznummer, verkauft_am)
+- Optional: `Kunde` (Name)
+
+### Beziehungstypen
+- Film 1:n Vorstellung (Ein Film hat viele Vorstellungen)
+- Saal 1:n Vorstellung (Ein Saal kann viele Vorstellungen haben, aber jede Vorstellung findet in genau einem Saal statt)
+- Vorstellung 1:n Ticket (Eine Vorstellung hat viele Tickets)
+- Kunde 1:n Ticket (Optional: Ein Kunde kauft mehrere Tickets)
+
+### Relationales Schema (Ausschnitt)
+```sql
+Film (
+  film_id INT PRIMARY KEY,
+  titel VARCHAR(120) NOT NULL,
+  dauer_min INT,
+  fsk VARCHAR(10)
+)
+
+Saal (
+  saal_id INT PRIMARY KEY,
+  bezeichnung VARCHAR(20),
+  sitzplaetze INT NOT NULL
+)
+
+Vorstellung (
+  vorstellung_id INT PRIMARY KEY,
+  film_id INT NOT NULL,
+  saal_id INT NOT NULL,
+  startzeit DATETIME NOT NULL,
+  preis DECIMAL(6,2) NOT NULL,
+  FOREIGN KEY (film_id) REFERENCES Film(film_id),
+  FOREIGN KEY (saal_id) REFERENCES Saal(saal_id)
+)
+
+Ticket (
+  ticket_id INT PRIMARY KEY,
+  vorstellung_id INT NOT NULL,
+  reihe VARCHAR(5),
+  platz_nr INT,
+  verkauft_am DATETIME,
+  FOREIGN KEY (vorstellung_id) REFERENCES Vorstellung(vorstellung_id)
+)
+```
+
+### Beispielabfragen
+```sql
+-- Auslastung pro Vorstellung
+SELECT v.vorstellung_id, f.titel, COUNT(t.ticket_id) AS verkaufte
+FROM Vorstellung v
+JOIN Film f ON f.film_id = v.film_id
+LEFT JOIN Ticket t ON t.vorstellung_id = v.vorstellung_id
+GROUP BY v.vorstellung_id, f.titel;
+
+-- Kommende Vorstellungen eines Films
+SELECT startzeit, saal_id
+FROM Vorstellung
+WHERE film_id = 5 AND startzeit >= NOW()
+ORDER BY startzeit ASC;
+```
+
+### Typische Normalisierungs-Falle
+Eine schlechte Tabelle:
+| vorstellung_id | film_titel | saal_bez | sitzplaetze | startzeit | film_fsk |
+|----------------|------------|----------|-------------|-----------|----------|
+| 10             | Matrix     | Saal 1   | 120         | 2025-11-20 19:30 | 16 |
+| 11             | Matrix     | Saal 1   | 120         | 2025-11-21 21:30 | 16 |
+
+Redundanz bei `film_titel`, `film_fsk`, `sitzplaetze`. Lösung: Trennung in Film, Saal, Vorstellung.
+
+## Schule-Domäne
+
+### Entitätstypen
+- `Schüler` (Name, Klasse)
+- `Lehrer` (Name, Fach)
+- `Kurs` (Titel, Fachgebiet)
+- `Einschreibung` (Verknüpfung Schüler-Kurs)
+- `Unterricht` (Lehrer unterrichtet Kurs in Zeitraum)
+
+### Beziehungen
+- Schüler n:m Kurs (über Einschreibung)
+- Lehrer 1:n Unterricht (Ein Lehrer unterrichtet mehrere Kurs-Zeiträume)
+- Kurs 1:n Unterricht (Ein Kurs kann mehrere Lehr-Einsätze haben)
+
+### Relationales Schema (Ausschnitt)
+```sql
+Schueler (
+  schueler_id INT PRIMARY KEY,
+  name VARCHAR(80) NOT NULL,
+  klasse VARCHAR(10)
+)
+
+Lehrer (
+  lehrer_id INT PRIMARY KEY,
+  name VARCHAR(80) NOT NULL,
+  fach VARCHAR(40)
+)
+
+Kurs (
+  kurs_id INT PRIMARY KEY,
+  titel VARCHAR(120) NOT NULL,
+  fachgebiet VARCHAR(60)
+)
+
+Einschreibung (
+  schueler_id INT,
+  kurs_id INT,
+  PRIMARY KEY (schueler_id, kurs_id),
+  FOREIGN KEY (schueler_id) REFERENCES Schueler(schueler_id),
+  FOREIGN KEY (kurs_id) REFERENCES Kurs(kurs_id)
+)
+
+Unterricht (
+  unterricht_id INT PRIMARY KEY,
+  kurs_id INT NOT NULL,
+  lehrer_id INT NOT NULL,
+  beginn DATE,
+  ende DATE,
+  FOREIGN KEY (kurs_id) REFERENCES Kurs(kurs_id),
+  FOREIGN KEY (lehrer_id) REFERENCES Lehrer(lehrer_id)
+)
+```
+
+### Beispielabfragen
+```sql
+-- Anzahl Schüler pro Kurs
+SELECT k.titel, COUNT(e.schueler_id) AS teilnehmer
+FROM Kurs k
+LEFT JOIN Einschreibung e ON e.kurs_id = k.kurs_id
+GROUP BY k.titel;
+
+-- Kurse eines Lehrers
+SELECT k.titel, u.beginn, u.ende
+FROM Unterricht u
+JOIN Kurs k ON k.kurs_id = u.kurs_id
+WHERE u.lehrer_id = 3;
+```
+
+### Normalisierungs-Falle
+Schlechte Tabelle:
+| schueler_id | schueler_name | kurs_titel   | lehrer_name | lehrer_fach |
+|-------------|---------------|--------------|-------------|-------------|
+| 1           | Anna          | Mathe Basis  | Müller      | Mathematik  |
+| 2           | Ben           | Mathe Basis  | Müller      | Mathematik  |
+
+Redundanz bei `lehrer_name`, `lehrer_fach`. Lösung: Lehrer getrennt, Einschreibung als n:m.
+
+## Verwendung in Aufgaben
+Diese Beispiele werden in Aufgaben als alternative Domänen genutzt, um Transferfähigkeit zu fördern.
+
+:::tip[Weiter]
+Siehe auch: [Transaktionen & ACID](/transaktionen/) und [Schlüssel & Integrität](/schluessel/)
+:::
+
+

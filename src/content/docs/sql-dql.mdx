@@ -1,0 +1,170 @@
+---
+title: 'SQL: DQL (Data Query Language)'
+description: Daten abfragen mit SELECT, WHERE, JOIN und ORDER BY
+---
+
+Das ist der mächtigste Teil von SQL. Mit DQL (eigentlich nur der `SELECT`-Befehl) stellen wir Fragen an die Datenbank.
+
+## `SELECT` (Grundlagen)
+
+`SELECT` wählt die Spalten aus, die du sehen willst.  
+`FROM` sagt, aus welcher Tabelle.
+
+```sql
+-- Zeige ALLE Spalten von ALLEN Trainern
+SELECT * FROM Trainer;
+
+-- Zeige nur die Namen und Typen aller Pokémon
+SELECT name, typ FROM Pokemon;
+```
+
+## Filtern mit `WHERE`
+
+`WHERE` filtert die Zeilen anhand einer Bedingung.
+
+```sql
+-- Zeige alle Wasser-Pokémon
+SELECT * FROM Pokemon
+WHERE typ = 'Wasser';
+
+-- Zeige alle Pokémon, die stärker als Level 20 sind
+SELECT name, level FROM Pokemon
+WHERE level > 20;
+```
+
+## Sortieren mit `ORDER BY`
+
+Sortiert das Ergebnis.
+
+```sql
+-- Zeige alle Pokémon, sortiert nach Level (absteigend)
+SELECT name, level FROM Pokemon
+ORDER BY level DESC; -- (ASC für aufsteigend)
+```
+
+## Tabellen verbinden mit `JOIN`
+
+Das ist die Königsdisziplin. `JOIN` verbindet Tabellen über ihre Schlüssel (PK/FK-Beziehung).
+
+**Frage:** "Ich will die Namen aller Pokémon wissen, und auch wie ihre Trainer heißen."
+
+Diese Info steht in ZWEI Tabellen (`Pokemon` und `Trainer`). Wir müssen sie verbinden.
+
+```sql
+SELECT
+    Pokemon.name AS pokemon_name,  -- Aliase für bessere Lesbarkeit
+    Trainer.name AS trainer_name
+FROM
+    Pokemon
+JOIN
+    Trainer ON Pokemon.trainer_id = Trainer.trainer_id;
+```
+
+Das `ON` sagt dem DBMS, *wie* die Tabellen zusammenhängen. `AS` gibt den Spalten aussagekräftige Namen im Ergebnis. Das Ergebnis könnte so aussehen:
+
+| pokemon_name | trainer_name |
+|--------------|--------------|
+| Pikachu      | Ash Ketchum  |
+| Sterndu      | Misty        |
+
+:::tip[Zu den Aufgaben]
+[Übungsaufgaben zu diesem Kapitel →](/aufgaben#kap-9-sql-dql)
+:::
+
+## Weitere Beispiele (Kino & Schule)
+
+### Kino – Auslastung pro Vorstellung
+```sql
+SELECT v.vorstellung_id,
+       f.titel,
+       COUNT(t.ticket_id) AS verkaufte,
+       ROUND(COUNT(t.ticket_id) * 100.0 / s.sitzplaetze, 2) AS prozent
+FROM Vorstellung v
+JOIN Film f ON f.film_id = v.film_id
+JOIN Saal s ON s.saal_id = v.saal_id
+LEFT JOIN Ticket t ON t.vorstellung_id = v.vorstellung_id
+GROUP BY v.vorstellung_id, f.titel, s.sitzplaetze;
+```
+
+### Schule – Teilnehmer je Kurs
+```sql
+SELECT k.titel, COUNT(e.schueler_id) AS teilnehmer
+FROM Kurs k
+LEFT JOIN Einschreibung e ON e.kurs_id = k.kurs_id
+GROUP BY k.titel
+ORDER BY teilnehmer DESC;
+```
+
+## DISTINCT & LIMIT
+
+```sql
+-- Einmalige Typen anzeigen
+SELECT DISTINCT typ FROM Pokemon;
+
+-- Nur die ersten 5 Pokémon
+SELECT name, level FROM Pokemon LIMIT 5;
+```
+
+## Aggregatsfunktionen & GROUP BY
+
+Aggregatsfunktionen fassen mehrere Zeilen zusammen:
+
+| Funktion | Zweck |
+|----------|-------|
+| `COUNT(*)` | Anzahl Zeilen |
+| `AVG(level)` | Durchschnitt |
+| `MIN(level)` | Minimum |
+| `MAX(level)` | Maximum |
+| `SUM(level)` | Summe |
+
+```sql
+-- Wie viele Pokémon pro Typ?
+SELECT typ, COUNT(*) AS anzahl
+FROM Pokemon
+GROUP BY typ;
+
+-- Durchschnittslevel je Trainer (nur Trainer mit mind. 2 Pokémon)
+SELECT trainer_id, AVG(level) AS avg_level
+FROM Pokemon
+GROUP BY trainer_id
+HAVING COUNT(*) >= 2;
+```
+
+`HAVING` filtert Gruppen nach Aggregaten (während `WHERE` einzelne Zeilen filtert).
+
+## JOIN-Varianten
+
+| JOIN-Typ | Ergebnis |
+|----------|----------|
+| `INNER JOIN` | Nur passende Zeilen (Schnittmenge) |
+| `LEFT JOIN` | Alle Zeilen links + passende rechts, sonst NULL |
+| `RIGHT JOIN` | Umgekehrt zu LEFT |
+| `FULL OUTER JOIN` | Alles (nicht in allen DBs verfügbar) |
+
+```sql
+-- Alle Trainer + ihre Pokémon (Trainer ohne Pokémon erscheinen trotzdem)
+SELECT Trainer.name, Pokemon.name AS pokemon_name
+FROM Trainer
+LEFT JOIN Pokemon ON Pokemon.trainer_id = Trainer.trainer_id;
+```
+
+## Einfache Unterabfragen (Subqueries)
+
+```sql
+-- Trainer mit mind. einem Wasser-Pokémon
+SELECT name
+FROM Trainer
+WHERE trainer_id IN (
+    SELECT trainer_id FROM Pokemon WHERE typ = 'Wasser'
+);
+```
+
+## Aliase für Tabellen
+
+```sql
+SELECT p.name, t.name
+FROM Pokemon AS p
+JOIN Trainer AS t ON p.trainer_id = t.trainer_id;
+```
+
+

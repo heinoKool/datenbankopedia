@@ -1,0 +1,63 @@
+---
+title: Physischer Entwurf & Performance
+description: Indizes, Denormalisierung und Speicherstrategien
+---
+
+Der physische Entwurf kümmert sich darum, *wie* das DBMS Daten effizient speichert und wieder findet.
+
+## Indizes
+
+Ein Index ist wie ein Inhaltsverzeichnis. Ohne Index müsste die DB jede Zeile durchsuchen (Full Table Scan).
+
+| Typ | Idee | Einsatz |
+|-----|------|--------|
+| B-Tree | balancierter Suchbaum | Standard für Bereichsabfragen (`level > 20`) |
+| Hash | Hash-Tabellen-Lookup | Sehr schnelle Gleichheitsvergleiche (kein Bereich) |
+| GIN / GiST | Spezial (PostgreSQL) | Volltext, Arrays, Geodaten |
+
+```sql
+-- Einfacher Index
+CREATE INDEX idx_pokemon_typ ON Pokemon(typ);
+
+-- Composite Index (Reihenfolge wichtig für Präfix-Abfragen)
+CREATE INDEX idx_pokemon_trainer_level ON Pokemon(trainer_id, level);
+```
+
+**Trade-off:** Jeder zusätzliche Index beschleunigt SELECT, verlangsamt INSERT/UPDATE/DELETE (weil Index aktualisiert werden muss) und benötigt Speicher.
+
+## Denormalisierung
+
+Manchmal führt man absichtlich Redundanz ein, um Performance zu steigern. Beispiel: Ein `anzahl_pokemon` Feld direkt in `Trainer` speichern statt jedes Mal zu zählen.
+
+**Risiko:** Inkonsistenz, wenn man bei Änderungen das Feld nicht aktualisiert.
+
+**Lösung:** Trigger oder Anwendungscode, der konsistent hält.
+
+## Partitionierung (Ausblick)
+
+Große Tabellen werden horizontal geteilt (z.B. nach Datum). Vorteil: Kleinere Teilbereiche schneller scanbar.
+
+## Materialisierte Views
+
+Vorgefertigte Abfrageergebnisse, die periodisch aktualisiert werden. Gut für komplexe JOIN + Aggregation.
+
+## Wann Index anlegen?
+- Häufige WHERE-Bedingung
+- JOIN-Spalten (FK)
+- Für Sortierungen (`ORDER BY level`)
+- Nicht für sehr geringe Kardinalität (z.B. Boolean-Felder) – wenig Nutzen
+
+## Abfrage-Optimierung Kurzcheck
+- Verwendet die DB einen Index? (`EXPLAIN SELECT ...` in vielen Systemen)
+- Keine `SELECT *` bei großen Tabellen – nur nötige Spalten wählen
+- Große Schreib-Batches zusammenfassen
+
+:::note[Merke]
+Mehr Indizes ≠ automatisch schneller. Miss & beobachte.
+:::
+
+:::tip[Weiter]
+Siehe auch: [Transaktionen & ACID](/transaktionen/) und [Normalisierung](/normalisierung/)
+:::
+
+
