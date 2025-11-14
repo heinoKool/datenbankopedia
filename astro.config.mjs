@@ -6,6 +6,8 @@ import catppuccin from '@catppuccin/starlight';
 export default defineConfig({
     // Öffentlich erreichbare URL (GitHub Pages)
     site: 'https://heinokool.github.io/datenbankopedia/',
+    // Base path für GitHub Pages Projekt-Repository
+    base: '/datenbankopedia/',
     integrations: [
         starlight({
             title: 'DB Lernen',
