@@ -4,9 +4,8 @@ import catppuccin from '@catppuccin/starlight';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-    // Update this to your real GitHub Pages URL after creating the repo.
-    // Example: 'https://<github-username>.github.io/datenbankopedia/'
-    site: 'https://<github-username>.github.io/datenbankopedia/',
+    // Öffentlich erreichbare URL (GitHub Pages)
+    site: 'https://heinokool.github.io/datenbankopedia/',
     integrations: [
         starlight({
             title: 'DB Lernen',

@@ -1,5 +1,7 @@
 # 📚 Datenbankopedia
 
+[![Deploy Astro to GitHub Pages](https://github.com/heinokool/datenbankopedia/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/heinokool/datenbankopedia/actions/workflows/gh-pages.yml)
+
 > Moderne Lernplattform für Datenbanken (11. Klasse) – powered by Astro Starlight & Catppuccin Theme
 
 ## ✨ Features
@@ -204,6 +206,18 @@ Dieses Repository ist für GitHub Pages vorbereitet (Workflow unter `.github/wor
    ```
 3. In den Repository Settings unter Pages den Branch `gh-pages` (wird automatisch erstellt) prüfen.
 4. Die Seite ist erreichbar unter: `https://<github-username>.github.io/datenbankopedia/`
+
+#### Optional: Eigene Domain verwenden
+
+1. DNS: `CNAME`-Record auf `heinokool.github.io` setzen (z.B. `db.example.com -> heinokool.github.io`).
+2. Eine Datei `public/CNAME` erstellen mit exakt deiner Domain als Inhalt (z.B. `db.example.com`).
+3. Commit & Push — GitHub Pages liest die Datei und richtet das Zertifikat (HTTPS) ein.
+4. In den Pages Settings "Enforce HTTPS" aktivieren (falls nicht automatisch aktiv).
+
+Beispiel `public/CNAME` Inhalt:
+```
+db.example.com
+```
 
 Astro `site` Konfiguration wurde als Platzhalter gesetzt. Nach dem ersten Deploy anpassen:
 ```js
